@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "declaration": false,
+    "skipLibCheck": true,
+    "pretty": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "cdk-env-manager-example",
+  "version": "0.1.0",
+  "description": "aws-cdk interactive deploy tool example.",
+  "private": true,
+  "scripts": {
+    "cdk": "node -r dotenv/config -r ts-node/register ../bin/index.ts",
+    "start": "dotenv-cli -- webpack-dev-server --hot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masahirompp/cdk-env-manager.git"
+  },
+  "keywords": [
+    "aws-cdk",
+    "typescript"
+  ],
+  "author": "Masahiro Onohara <masahirompp@gmail.com> (https://github.com/masahirompp)",
+  "license": "MIT",
+  "devDependencies": {
+    "@aws-cdk/aws-iam": "^1.18.0",
+    "@aws-cdk/aws-s3": "^1.18.0",
+    "@aws-cdk/aws-ssm": "^1.18.0",
+    "@aws-cdk/core": "^1.18.0",
+    "@types/node": "^12.12.14",
+    "@types/webpack": "^4.41.0",
+    "aws-cdk": "^1.18.0",
+    "aws-sdk": "^2.581.0",
+    "dotenv": "^8.2.0",
+    "dotenv-cli": "^3.1.0",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,57 @@
+{
+  "name": "cdk-env-manager",
+  "version": "0.1.0",
+  "description": "aws-cdk interactive deploy tool.",
+  "main": "bin/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "cdkm": "bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masahirompp/cdk-env-manager.git"
+  },
+  "keywords": [
+    "aws-cdk",
+    "typescript"
+  ],
+  "author": "Masahiro Onohara <masahirompp@gmail.com> (https://github.com/masahirompp)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/masahirompp/cdk-env-manager/issues"
+  },
+  "homepage": "https://github.com/masahirompp/cdk-env-manager#readme",
+  "devDependencies": {
+    "@aws-cdk/aws-ssm": "^1.18.0",
+    "@aws-cdk/core": "^1.18.0",
+    "@types/node": "^12.12.14",
+    "@typescript-eslint/eslint-plugin": "^2.9.0",
+    "@typescript-eslint/parser": "^2.9.0",
+    "aws-sdk": "^2.581.0",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "prettier": "^1.19.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "enquirer": "^2.3.2",
+    "json-stringify-pretty-compact": "^2.0.0",
+    "pascal-case": "^3.0.0"
+  },
+  "peerDependencies": {
+    "@aws-cdk/aws-ssm": "^1.18.0",
+    "@aws-cdk/core": "^1.18.0",
+    "aws-sdk": "^2.581.0"
+  }
+}
