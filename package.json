@@ -1,6 +1,6 @@
 {
   "name": "cdk-env-manager",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "aws-cdk interactive deploy tool.",
   "main": "bin/index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "bin": {
     "cdkm": "bin/index.js"
   },
+  "types": "lib/index.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/masahirompp/cdk-env-manager.git"
