@@ -1,1 +1,7 @@
 example
+.editorconfig
+.eslintrc.json
+.gitattributes
+.prettierrc
+tsconfig.json
+README.md
