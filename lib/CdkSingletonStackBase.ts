@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core'
 import { createCdkSsmStringParameter, TAG_NAME_CDK_ENV_KEY } from './CdkUtils'
 
-export abstract class CdkStackBase<
+export abstract class CdkSingletonStackBase<
   Props extends {} = {},
   Exports extends {} = {}
 > extends cdk.Stack {
@@ -9,22 +9,18 @@ export abstract class CdkStackBase<
 
   constructor(
     scope: cdk.Construct,
-    protected props: { cdkEnvKey: string; stackName: string } & Props,
+    protected props: { stackName: string } & Props,
     protected stackProps?: Omit<cdk.StackProps, 'stackName'>
   ) {
-    super(scope, `${props.cdkEnvKey}${props.stackName}`, stackProps)
-    this.tags.setTag(TAG_NAME_CDK_ENV_KEY, props.cdkEnvKey)
+    super(scope, props.stackName, stackProps)
+    this.tags.setTag(TAG_NAME_CDK_ENV_KEY, props.stackName)
 
     this.exports = this.createResources()
   }
 
-  protected name(name: string) {
-    return `${this.props.cdkEnvKey}${name}`
-  }
-
   protected createOutputsSsmParameters<T extends { [key: string]: string }>(outputs: T) {
     Object.entries(outputs).map(([name, value]) =>
-      createCdkSsmStringParameter(this, { cdkEnvKey: this.props.cdkEnvKey, name, value })
+      createCdkSsmStringParameter(this, { cdkEnvKey: this.props.stackName, name, value })
     )
   }
 
