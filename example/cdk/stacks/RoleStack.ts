@@ -2,9 +2,9 @@ import * as iam from '@aws-cdk/aws-iam'
 import { CdkStackBase } from '../../../lib/CdkStackBase'
 
 type Input = { bucketArn: string }
-type Output = { myRoleArn: string }
+type Export = { myRoleArn: string }
 
-export class RoleStack extends CdkStackBase<Input, Output> {
+export class RoleStack extends CdkStackBase<Input, Export> {
   createResources() {
     const myManagedPolicy = new iam.ManagedPolicy(this, this.name('MyManagedRole'), {
       statements: [

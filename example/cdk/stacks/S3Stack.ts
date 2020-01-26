@@ -3,9 +3,9 @@ import * as s3 from '@aws-cdk/aws-s3'
 import { CdkStackBase } from '../../../lib/CdkStackBase'
 
 type Input = { removalPolicy: cdk.RemovalPolicy }
-type Output = { myBucketArn: string }
+type Export = { myBucketArn: string }
 
-export class S3Stack extends CdkStackBase<Input, Output> {
+export class S3Stack extends CdkStackBase<Input, Export> {
   createResources() {
     const myBucket = new s3.Bucket(this, this.name('MyBucket'), {
       removalPolicy: this.props.removalPolicy
