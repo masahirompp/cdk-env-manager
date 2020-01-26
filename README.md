@@ -1,5 +1,9 @@
 # cdk-env-manager
 
+[![npm version](https://badge.fury.io/js/cdk-env-manager.svg)](https://badge.fury.io/js/cdk-env-manager)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fmasahirompp%2Fcdk-env-manager)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fmasahirompp%2Fcdk-env-manager)
+
 aws-cdk で複数環境（production, development, etc...）を管理するための CLI ツールです。
 TypeScript 対応。
 
