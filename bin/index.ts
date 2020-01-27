@@ -8,6 +8,7 @@ import {
   CdkDeployParameters,
   diffCdkDeployParametersKeys,
   ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY,
+  SINGLETON_PREFIX,
   getStackNamesPerCdkEnvKey,
   loadCdkDeployParametersDefault,
   loadCdkDeployParametersFromSsm,
@@ -126,7 +127,9 @@ const run = async () => {
   const stackNamesPerCdkEnvKey = await getStackNamesPerCdkEnvKey()
 
   // デプロイするStackを選択または入力させる
-  const { isNew, cdkEnvKey } = await selectCdkEnvKey(Object.keys(stackNamesPerCdkEnvKey))
+  const { isNew, cdkEnvKey } = await selectCdkEnvKey(
+    Object.keys(stackNamesPerCdkEnvKey).filter(key => !key.startsWith(SINGLETON_PREFIX))
+  )
 
   // パラメータの確認（最新のパラメータは、SSMとローカルの両方に保持する）
   const defaultCdkDeployParameters = loadCdkDeployParametersDefault()

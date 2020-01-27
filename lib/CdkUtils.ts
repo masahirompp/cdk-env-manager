@@ -12,6 +12,7 @@ export type CdkDeployParameters = { [name: string]: string }
 
 export const ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY = 'CDK_ENV_KEY'
 export const TAG_NAME_CDK_ENV_KEY = 'CdkEnvKey'
+export const SINGLETON_PREFIX = 'SINGLETON__'
 export const CDK_DEPLOY_PARAMETERS_KEY = 'CdkDeployParametersString'
 export const CDK_DEPLOY_DEFAULT_PARAMETERS_FILE_PATH = 'cdk.parameters.default.env'
 
