@@ -203,7 +203,7 @@ const run = async () => {
     }).run()
   }
 
-  if (!(await new Confirm({ message: 'Are you sure you want to deploy?' }).run())) {
+  if (!(await new Confirm({ message: 'Do you wish to deploy?' }).run())) {
     return
   }
 
