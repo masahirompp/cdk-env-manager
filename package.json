@@ -26,23 +26,23 @@
   },
   "homepage": "https://github.com/masahirompp/cdk-env-manager#readme",
   "devDependencies": {
-    "@aws-cdk/aws-ssm": "^1.22.0",
-    "@aws-cdk/core": "^1.22.0",
-    "@types/node": "^13.5.0",
-    "@typescript-eslint/eslint-plugin": "^2.17.0",
-    "@typescript-eslint/parser": "^2.17.0",
-    "aws-sdk": "^2.610.0",
+    "@aws-cdk/aws-ssm": "^1.30.0",
+    "@aws-cdk/core": "^1.30.0",
+    "@types/node": "^13.9.2",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
+    "aws-sdk": "^2.642.0",
     "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "prettier": "^1.19.1",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.7.5"
+    "ts-node": "^8.7.0",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
@@ -51,8 +51,8 @@
     "pascal-case": "^3.1.1"
   },
   "peerDependencies": {
-    "@aws-cdk/aws-ssm": "^1.22.0",
-    "@aws-cdk/core": "^1.22.0",
-    "aws-sdk": "^2.610.0"
+    "@aws-cdk/aws-ssm": "^1.30.0",
+    "@aws-cdk/core": "^1.30.0",
+    "aws-sdk": "^2.642.0"
   }
 }
