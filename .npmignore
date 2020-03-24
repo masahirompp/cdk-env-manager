@@ -1,6 +1,7 @@
 assets
 example
 .editorconfig
+.eslintignore
 .eslintrc.json
 .gitattributes
 .prettierrc
