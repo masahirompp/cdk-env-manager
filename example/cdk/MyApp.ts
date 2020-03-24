@@ -7,17 +7,13 @@ type Parameter = { removalPolicy: cdk.RemovalPolicy }
 
 export class MyApp extends CdkAppBase<Parameter> {
   async createStacks() {
-    const s3Stack = new S3Stack(this, {
-      cdkEnvKey: this.cdkEnvKey,
-      stackName: 'S3Stack',
-      removalPolicy: this.deployParameters.removalPolicy
+    const s3Stack = new S3Stack(this, 'S3Stack', {
+      removalPolicy: this.deployParameters.removalPolicy,
     })
 
     // eslint-disable-next-line no-new
-    new RoleStack(this, {
-      cdkEnvKey: this.cdkEnvKey,
-      stackName: 'RoleBucket',
-      bucketArn: s3Stack.exports.myBucketArn
+    new RoleStack(this, 'RoleBucket', {
+      bucketArn: s3Stack.exports.myBucketArn,
     })
   }
 }

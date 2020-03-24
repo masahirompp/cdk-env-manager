@@ -31,7 +31,7 @@ export const createCdkSsmStringParameter = (
 ) => {
   return new AwsCdkSsm.StringParameter(scope, name, {
     parameterName: makeStackParameterPath(cdkEnvKey, name),
-    stringValue: value
+    stringValue: value,
   })
 }
 
@@ -43,9 +43,9 @@ export const getStackParameters = async <T extends { [key: string]: string }>(
 
   // ssmからAWSリソースの設定情報を取得
   const ssm = new AwsSdkSsm(option)
-  const getParametersByPath: (
-    nextToken?: string
-  ) => Promise<AwsSdkSsm.Parameter[]> = async nextToken => {
+  const getParametersByPath: (nextToken?: string) => Promise<AwsSdkSsm.Parameter[]> = async (
+    nextToken
+  ) => {
     const ssmResult = await ssm
       .getParametersByPath({ Path: parameterPath, Recursive: true, NextToken: nextToken })
       .promise()
@@ -60,7 +60,7 @@ export const getStackParameters = async <T extends { [key: string]: string }>(
   const params = parameters.reduce<T>(
     (payload, p) => ({
       ...payload,
-      [p.Name!.substring(parameterPath.length)]: p.Value
+      [p.Name!.substring(parameterPath.length)]: p.Value,
     }),
     {} as any
   )
@@ -73,18 +73,18 @@ const getStackTagMappingList = async (
   const client = new ResourceGroupsTaggingAPI(options)
   const getStackTagMappingListPerPage: (
     paginationToken?: string
-  ) => Promise<ResourceGroupsTaggingAPI.ResourceTagMappingList> = async paginationToken => {
+  ) => Promise<ResourceGroupsTaggingAPI.ResourceTagMappingList> = async (paginationToken) => {
     const result = await client
       .getResources({
         PaginationToken: paginationToken,
         TagFilters: [{ Key: TAG_NAME_CDK_ENV_KEY }],
-        ResourceTypeFilters: ['cloudformation:stack']
+        ResourceTypeFilters: ['cloudformation:stack'],
       })
       .promise()
     if (result.PaginationToken) {
       return [
         ...(result.ResourceTagMappingList || []),
-        ...(await getStackTagMappingListPerPage(result.PaginationToken))
+        ...(await getStackTagMappingListPerPage(result.PaginationToken)),
       ]
     }
     return result.ResourceTagMappingList || []
@@ -155,10 +155,10 @@ export const writeCdkDeployParametersToSsm = async (
       Overwrite: overwrite,
       Name: makeStackParameterPath(cdkEnvKey, CDK_DEPLOY_PARAMETERS_KEY),
       Value: JSON.stringify(deployParameters),
-      Tags: overwrite ? undefined : [{ Key: 'CdkEnvKey', Value: cdkEnvKey }]
+      Tags: overwrite ? undefined : [{ Key: 'CdkEnvKey', Value: cdkEnvKey }],
     })
     .promise()
-    .catch(e => {
+    .catch((e) => {
       if (e.code === 'ParameterAlreadyExists') {
         return writeCdkDeployParametersToSsm(cdkEnvKey, deployParameters, true, option)
       }
@@ -193,7 +193,7 @@ export const diffCdkDeployParametersKeys = (a: CdkDeployParameters, b: CdkDeploy
   const bKeys = Object.keys(b)
 
   return !!(
-    aKeys.filter(aKey => !bKeys.includes(aKey)).length ||
-    bKeys.filter(bKey => !aKeys.includes(bKey)).length
+    aKeys.filter((aKey) => !bKeys.includes(aKey)).length ||
+    bKeys.filter((bKey) => !aKeys.includes(bKey)).length
   )
 }

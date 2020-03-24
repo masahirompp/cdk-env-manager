@@ -8,13 +8,13 @@ type Export = { myBucketArn: string }
 export class S3Stack extends CdkStackBase<Input, Export> {
   createResources() {
     const myBucket = new s3.Bucket(this, this.name('MyBucket'), {
-      removalPolicy: this.props.removalPolicy
+      removalPolicy: this.props.removalPolicy,
     })
 
     this.createOutputsSsmParameters({ myBucketName: myBucket.bucketName })
 
     return {
-      myBucketArn: myBucket.bucketArn
+      myBucketArn: myBucket.bucketArn,
     }
   }
 }

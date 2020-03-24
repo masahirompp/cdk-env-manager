@@ -11,14 +11,14 @@ export class RoleStack extends CdkStackBase<Input, Export> {
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           actions: ['s3:GetObject'],
-          resources: [this.props.bucketArn]
-        })
-      ]
+          resources: [this.props.bucketArn],
+        }),
+      ],
     })
 
     const myRole = new iam.Role(this, this.name('MyRole'), {
       assumedBy: new iam.ServicePrincipal('appsync.amazonaws.com'),
-      managedPolicies: [myManagedPolicy]
+      managedPolicies: [myManagedPolicy],
     })
 
     return { myRoleArn: myRole.roleArn }

@@ -14,16 +14,16 @@ import {
   loadCdkDeployParametersFromSsm,
   mergeCdkDeployParameters,
   writeCdkDeployParametersToLocal,
-  writeCdkDeployParametersToSsm
+  writeCdkDeployParametersToSsm,
 } from '../lib/CdkUtils'
 
 const { MultiSelect, Select, Input, Confirm, Snippet } = enquirer as any
 
 const exec = (path: string, args: string[], env: any) => {
   console.log(chalk.blue([path, ...args].join(' ')))
-  return new Promise<'success' | 'failed'>(resolve => {
+  return new Promise<'success' | 'failed'>((resolve) => {
     const p = spawn(path, args, { stdio: 'inherit', env })
-    p.on('close', code => {
+    p.on('close', (code) => {
       resolve(code === 0 ? 'success' : 'failed')
     })
   })
@@ -34,7 +34,7 @@ const selectCdkEnvKey = async (currentCdkEnvKeys: string[]) => {
 
   const userSelected = await new Select({
     message: 'select CdkEnvKey to deploy',
-    choices: [...currentCdkEnvKeys, NEW_STACK]
+    choices: [...currentCdkEnvKeys, NEW_STACK],
   }).run()
 
   const isNew = userSelected === NEW_STACK
@@ -42,9 +42,9 @@ const selectCdkEnvKey = async (currentCdkEnvKeys: string[]) => {
     return { isNew, cdkEnvKey: userSelected }
   }
 
-  const inputCdkEnvKey: (
-    userInputCdkEnvKey?: string
-  ) => Promise<string> = async userInputCdkEnvKey => {
+  const inputCdkEnvKey: (userInputCdkEnvKey?: string) => Promise<string> = async (
+    userInputCdkEnvKey
+  ) => {
     if (userInputCdkEnvKey) {
       if (currentCdkEnvKeys.includes(userInputCdkEnvKey)) {
         console.log(chalk.yellow(`CdkEnvKey [${userInputCdkEnvKey}] already exists`))
@@ -59,7 +59,7 @@ const selectCdkEnvKey = async (currentCdkEnvKeys: string[]) => {
 
   return {
     isNew,
-    cdkEnvKey: await inputCdkEnvKey()
+    cdkEnvKey: await inputCdkEnvKey(),
   }
 }
 
@@ -80,7 +80,7 @@ const willChangeCdkDeployParameters: (
   const userWillChange: () => Promise<boolean> = async () => {
     const userSelected = await new Select({
       message: 'change aws-cdk deploy parameters?',
-      choices: [SHOW, CHANGE, NO_CHANGE]
+      choices: [SHOW, CHANGE, NO_CHANGE],
     }).run()
     if (userSelected === SHOW) {
       console.log(stringify(latestCdkDeployParameters, { maxLength: 4 }))
@@ -94,18 +94,18 @@ const willChangeCdkDeployParameters: (
 
 const inputCdkDeployParameters: (
   parameters: CdkDeployParameters
-) => Promise<CdkDeployParameters> = async parameters => {
+) => Promise<CdkDeployParameters> = async (parameters) => {
   const inputted = await new Snippet({
     message: 'configure aws-cdk App parameters',
     required: false,
     fields: Object.entries(parameters).map(([name, message]) => ({
       name,
-      message
+      message,
     })),
     template: stringify(
       Object.keys(parameters).reduce((payload, key) => ({ ...payload, [key]: `\${${key}}` }), {}),
       { maxLength: 4 }
-    )
+    ),
   }).run()
   const complementedParameters = mergeCdkDeployParameters(parameters, inputted.values)
   console.log(chalk.cyan(stringify(complementedParameters, { maxLength: 4 })))
@@ -128,14 +128,14 @@ const run = async () => {
 
   // デプロイするStackを選択または入力させる
   const { isNew, cdkEnvKey } = await selectCdkEnvKey(
-    Object.keys(stackNamesPerCdkEnvKey).filter(key => !key.startsWith(SINGLETON_PREFIX))
+    Object.keys(stackNamesPerCdkEnvKey).filter((key) => !key.startsWith(SINGLETON_PREFIX))
   )
 
   // パラメータの確認（最新のパラメータは、SSMとローカルの両方に保持する）
   const defaultCdkDeployParameters = loadCdkDeployParametersDefault()
   const latestCdkDeployParameters = isNew
     ? null
-    : await loadCdkDeployParametersFromSsm(cdkEnvKey).catch(e => {
+    : await loadCdkDeployParametersFromSsm(cdkEnvKey).catch((e) => {
         console.log(chalk.yellow('error occurred in get ssm parameters.', e))
         return null
       })
@@ -164,10 +164,10 @@ const run = async () => {
   const cdkArgs = process.argv.slice(2) // コマンドライン引数(0: node, 1: script file, 2...: args)
   const stackNames = execSync(['cdk', 'list', ...cdkArgs].join(' '), {
     encoding: 'utf8',
-    env: { ...process.env, [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey }
+    env: { ...process.env, [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey },
   })
     .split(/\r?\n/g)
-    .filter(stackName => stackName) // 空行の出力を除く
+    .filter((stackName) => stackName) // 空行の出力を除く
 
   if (!isNew) {
     // AWSのCloudFormation上にあるが、aws-cdkのソースコードとしてはないStack
@@ -190,7 +190,7 @@ const run = async () => {
   // diff
   const resultDiff = await exec('cdk', ['diff', ...cdkArgs], {
     ...process.env,
-    [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey
+    [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey,
   })
   console.log(resultDiff)
 
@@ -199,7 +199,7 @@ const run = async () => {
   while (targetStacks.length === 0) {
     targetStacks = await new MultiSelect({
       message: 'select Stacks to deploy',
-      choices: stackNames
+      choices: stackNames,
     }).run()
   }
 
@@ -210,7 +210,7 @@ const run = async () => {
   // deploy
   const resultDeploy = await exec('cdk', ['deploy', ...targetStacks, ...cdkArgs], {
     ...process.env,
-    [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey
+    [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey,
   })
   console.log(resultDeploy)
 
