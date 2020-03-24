@@ -21,6 +21,8 @@ TypeScript 対応。
 
 ## Demo
 
+デプロイ時の interactive CLI のイメージ
+
 ![CDK](./assets/cdk.gif 'cdk')
 
 ## Install
@@ -64,13 +66,13 @@ type Export = { myBucketArn: string }
 export class S3Stack extends CdkStackBase<Input, Export> {
   createResources() {
     const myBucket = new s3.Bucket(this, this.name('MyBucket'), {
-      removalPolicy: this.props.removalPolicy
+      removalPolicy: this.props.removalPolicy,
     })
 
     this.createOutputsSsmParameters({ myBucketName: myBucket.bucketName })
 
     return {
-      myBucketArn: myBucket.bucketArn
+      myBucketArn: myBucket.bucketArn,
     }
   }
 }
@@ -96,20 +98,16 @@ import { CdkAppBase } from 'cdk-env-manager'
 import { RoleStack } from './stacks/RoleStack'
 import { S3Stack } from './stacks/S3Stack'
 
-type Parameter = { removalPolicy: cdk.RemovalPolicy }
+type DeployParameter = { removalPolicy: cdk.RemovalPolicy }
 
-export class MyApp extends CdkAppBase<Parameter> {
+export class MyApp extends CdkAppBase<DeployParameter> {
   async createStacks() {
-    const s3Stack = new S3Stack(this, {
-      cdkEnvKey: this.cdkEnvKey,
-      stackName: 'S3Stack',
-      removalPolicy: this.deployParameters.removalPolicy
+    const s3Stack = new S3Stack(this, 'S3Stack', {
+      removalPolicy: this.deployParameters.removalPolicy,
     })
 
-    new RoleStack(this, {
-      cdkEnvKey: this.cdkEnvKey,
-      stackName: 'RoleBucket',
-      bucketArn: s3Stack.exports.myBucketArn
+    new RoleStack(this, 'RoleBucket', {
+      bucketArn: s3Stack.exports.myBucketArn,
     })
   }
 }
@@ -122,7 +120,9 @@ app.synth()
 
 ### Default Parameter の定義
 
-プロジェクトのルートに cdk.parameters.default.env を作成し、既定のパラメータを key=value 形式で指定してください。
+デプロイ時にパラメータを渡すことができます。パラメータは環境毎に設定できます。
+パラメータの既定値をファイルに記載しておく必要があります。
+プロジェクトのルートに cdk.parameters.default.env を作成し、パラメータの既定値を key=value 形式で指定してください。
 
 ```txt
 REMOVAL_POLICY=retain
@@ -131,7 +131,7 @@ XXX=xxx
 
 ### 環境変数の設定
 
-デプロイ時に必要な以下の環境変数を設定してください。
+デプロイ時に必要な以下の環境変数を設定してください。aws-cdk が参照する環境変数となります。
 
 - AWS_DEFAULT_REGION
 - AWS_ACCESS_KEY_ID と AWS_SECRET_ACCESS_KEY のペア、または AWS_PROFILE
@@ -154,7 +154,13 @@ npx cdk-env-manager
 aws-cdk の cli options が使用できます。
 `cdk diff`, `cdk deploy`実行時に指定された option を渡します。
 
-## with webpack
+```sh
+npx cdk-env-manager --trace # Print trace for stack warnings
+```
+
+## アプリケーションから Stack Outputs の参照
+
+### with webpack
 
 SSM に書き出された設定値を、webpack で読み込んでビルドする方法です。
 
@@ -179,9 +185,9 @@ const configFunction: () => Promise<webpack.Configuration> = async () => {
         ...Object.keys(params).reduce(
           (payload, key) => ({ ...payload, [key]: JSON.stringify(params[key]) }),
           {}
-        )
-      })
-    ]
+        ),
+      }),
+    ],
   }
 }
 
