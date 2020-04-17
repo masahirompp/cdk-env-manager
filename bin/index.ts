@@ -73,6 +73,12 @@ const willChangeCdkDeployParameters: (
     console.log(chalk.yellow('default parameters changed since the latest deployment.'))
     return true
   }
+  // 既定のパラメータがない場合、未設定か削除したかのいずれかが想定される
+  // 削除された場合は変更必要。直前のif文で判断している
+  // 未設定であれば変更不要。
+  if (Object.keys(defaultCdkDeployParameters).length === 0) {
+    return false
+  }
 
   const SHOW = 'show current parameters'
   const CHANGE = 'change parameters'
