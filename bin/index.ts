@@ -95,6 +95,9 @@ const willChangeCdkDeployParameters: (
 const inputCdkDeployParameters: (
   parameters: CdkDeployParameters
 ) => Promise<CdkDeployParameters> = async (parameters) => {
+  if (Object.keys(parameters).length === 0) {
+    return {}
+  }
   const inputted = await new Snippet({
     message: 'configure aws-cdk App parameters',
     required: false,
