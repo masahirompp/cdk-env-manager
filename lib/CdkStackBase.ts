@@ -16,6 +16,9 @@ export abstract class CdkStackBase<
     protected stackProps?: Omit<cdk.StackProps, 'stackName'>
   ) {
     super(scope, `${scope.cdkEnvKey}${stackName}`, stackProps)
+    this.name.bind(this)
+    this.createOutputsSsmParameters.bind(this)
+
     this.tags.setTag(TAG_NAME_CDK_ENV_KEY, scope.cdkEnvKey)
 
     this.cdkEnvKey = scope.cdkEnvKey
