@@ -1,6 +1,6 @@
 {
   "name": "cdk-env-manager",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "aws-cdk interactive deploy tool.",
   "main": "lib/index.js",
   "types": "lib/index.ts",
