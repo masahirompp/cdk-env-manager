@@ -96,10 +96,11 @@ const inputCdkDeployParameters: (
   parameters: CdkDeployParameters
 ) => Promise<CdkDeployParameters> = async (parameters) => {
   if (Object.keys(parameters).length === 0) {
+    console.log(chalk.gray('deploy parameter editing will be skipped.'))
     return {}
   }
   const inputted = await new Snippet({
-    message: 'configure aws-cdk App parameters',
+    message: 'configure aws-cdk App deploy parameters',
     required: false,
     fields: Object.entries(parameters).map(([name, message]) => ({
       name,
