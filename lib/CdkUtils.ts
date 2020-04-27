@@ -17,7 +17,15 @@ export const CDK_DEPLOY_PARAMETERS_KEY = 'CdkDeployParametersString'
 export const CDK_DEPLOY_DEFAULT_PARAMETERS_FILE_PATH = 'cdk.parameters.default.env'
 
 const makeStackParameterPath = (cdkEnvKey: string, ...paths: string[]) =>
-  `/CDK/${[pascalCase(cdkEnvKey), ...paths].join('/')}`
+  '/' +
+  [
+    'CDK',
+    process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY],
+    pascalCase(cdkEnvKey),
+    ...paths,
+  ]
+    .filter((s) => !!s)
+    .join('/')
 
 const makeCdkDeployParametersFilePath = (cdkEnvKey: string) => {
   const cwd = process.cwd()
