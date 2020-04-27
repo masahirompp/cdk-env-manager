@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core'
 import { CdkAppBase } from './CdkAppBase'
-import { createCdkSsmStringParameter, TAG_NAME_CDK_ENV_KEY } from './CdkUtils'
+import { createCdkSsmStringParameter, getTagNameCdkEnvKey } from './CdkUtils'
 
 export abstract class CdkStackBase<
   Props extends {} = {},
@@ -19,7 +19,7 @@ export abstract class CdkStackBase<
     this.name.bind(this)
     this.createOutputsSsmParameters.bind(this)
 
-    this.tags.setTag(TAG_NAME_CDK_ENV_KEY, scope.cdkEnvKey)
+    this.tags.setTag(getTagNameCdkEnvKey(), scope.cdkEnvKey)
 
     this.cdkEnvKey = scope.cdkEnvKey
     this.exports = this.createResources()

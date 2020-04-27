@@ -11,7 +11,8 @@ import { Construct } from '@aws-cdk/core'
 export type CdkDeployParameters = { [name: string]: string }
 
 export const ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY = 'CDK_ENV_KEY'
-export const TAG_NAME_CDK_ENV_KEY = 'CdkEnvKey'
+export const ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY = 'CDK_ENV_APP_KEY'
+export const TAG_NAME_CDK_ENV_KEY_DEFAULT = 'CdkEnvKey'
 export const SINGLETON_PREFIX = 'SINGLETON__'
 export const CDK_DEPLOY_PARAMETERS_KEY = 'CdkDeployParametersString'
 export const CDK_DEPLOY_DEFAULT_PARAMETERS_FILE_PATH = 'cdk.parameters.default.env'
@@ -77,7 +78,7 @@ const getStackTagMappingList = async (
     const result = await client
       .getResources({
         PaginationToken: paginationToken,
-        TagFilters: [{ Key: TAG_NAME_CDK_ENV_KEY }],
+        TagFilters: [{ Key: getTagNameCdkEnvKey() }],
         ResourceTypeFilters: ['cloudformation:stack'],
       })
       .promise()
@@ -91,6 +92,9 @@ const getStackTagMappingList = async (
   }
   return getStackTagMappingListPerPage()
 }
+
+export const getTagNameCdkEnvKey = () =>
+  process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY] || TAG_NAME_CDK_ENV_KEY_DEFAULT
 
 export const getStackNamesPerCdkEnvKey = async (
   options?: ResourceGroupsTaggingAPI.Types.ClientConfiguration

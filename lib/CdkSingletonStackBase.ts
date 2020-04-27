@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core'
 import { CdkAppBase } from './CdkAppBase'
-import { createCdkSsmStringParameter, SINGLETON_PREFIX, TAG_NAME_CDK_ENV_KEY } from './CdkUtils'
+import { createCdkSsmStringParameter, SINGLETON_PREFIX, getTagNameCdkEnvKey } from './CdkUtils'
 
 export abstract class CdkSingletonStackBase<
   Props extends {} = {},
@@ -15,7 +15,7 @@ export abstract class CdkSingletonStackBase<
     protected stackProps?: Omit<cdk.StackProps, 'stackName'>
   ) {
     super(scope, stackName, stackProps)
-    this.tags.setTag(TAG_NAME_CDK_ENV_KEY, `${SINGLETON_PREFIX}${stackName}`)
+    this.tags.setTag(getTagNameCdkEnvKey(), `${SINGLETON_PREFIX}${stackName}`)
 
     this.exports = this.createResources()
   }

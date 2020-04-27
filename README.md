@@ -215,6 +215,11 @@ CDK_ENV_KEY=Dev # SSMから取得する環境のKEYを指定
 HOSTED ZONE など、各環境で共通で利用したいリソースは、`CdkSingletonStackBase`を継承して Stack を作成してください。
 各環境でこの Stack を共有して利用します。
 
+## 1 つの AWS アカウント内に複数の CdkApp を持ちたい場合
+
+環境変数`CDK_ENV_APP_KEY`を設定することで、
+AWS アカウント内で参照する CdkApp を切り替えることができます。
+
 ## License
 
 MIT
