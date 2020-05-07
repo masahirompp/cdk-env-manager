@@ -131,7 +131,8 @@ export const loadCdkDeployParametersDefault = () => {
       CDK_DEPLOY_DEFAULT_PARAMETERS_FILE_PATH
     )
     if (!fs.existsSync(defaultParametersFilePath)) {
-      throw Error(`file not found: ${defaultParametersFilePath}, create default parameter file.`)
+      fs.writeFileSync(defaultParametersFilePath, '#REMOVAL_POLICY=retain', { encoding: 'utf8' })
+      console.log(`file not found: ${defaultParametersFilePath}, created default parameter file.`)
     }
     defaultParameters = dotenv.config({ path: defaultParametersFilePath }).parsed || {}
   }
