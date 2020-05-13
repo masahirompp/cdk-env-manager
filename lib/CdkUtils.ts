@@ -20,7 +20,7 @@ const makeStackParameterPath = (cdkEnvKey: string, ...paths: string[]) =>
   '/' +
   [
     'CDK',
-    process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY],
+    pascalCase(process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY] || ''),
     pascalCase(cdkEnvKey),
     ...paths,
   ]
