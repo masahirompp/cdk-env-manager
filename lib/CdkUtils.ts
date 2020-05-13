@@ -45,7 +45,7 @@ export const getStackParameters = async <T extends { [key: string]: string }>(
   cdkEnvKey: string,
   option?: AwsSdkSsm.Types.ClientConfiguration
 ) => {
-  const parameterPath = makeStackParameterPath(cdkAppKey, cdkAppKey, cdkEnvKey) + '/'
+  const parameterPath = makeStackParameterPath(cdkAppKey, cdkEnvKey) + '/'
 
   // ssmからAWSリソースの設定情報を取得
   const ssm = new AwsSdkSsm(option)
