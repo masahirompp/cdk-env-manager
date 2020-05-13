@@ -20,7 +20,7 @@ export abstract class CdkStackBase<
     this.name.bind(this)
     this.createOutputsSsmParameters.bind(this)
 
-    this.tags.setTag(getTagNameCdkEnvKey(), scope.cdkEnvKey)
+    this.tags.setTag(getTagNameCdkEnvKey(scope.__appKey), scope.cdkEnvKey)
 
     this.__appKey = scope.__appKey
     this.cdkEnvKey = scope.cdkEnvKey
@@ -33,7 +33,12 @@ export abstract class CdkStackBase<
 
   protected createOutputsSsmParameters<T extends { [key: string]: string }>(outputs: T) {
     Object.entries(outputs).map(([name, value]) =>
-      createCdkSsmStringParameter(this, { cdkEnvKey: this.cdkEnvKey, name, value })
+      createCdkSsmStringParameter(this, {
+        cdkAppKey: this.__appKey,
+        cdkEnvKey: this.cdkEnvKey,
+        name,
+        value,
+      })
     )
   }
 

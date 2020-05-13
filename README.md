@@ -169,13 +169,11 @@ SSM に書き出された設定値を、webpack で読み込んでビルドす�
 ```typescript
 // webpack.config.ts
 import webpack from 'webpack'
-import { ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY, getStackParameters } from 'cdk-env-manager'
+import { loadStackParameters } from 'cdk-env-manager'
 
 const configFunction: () => Promise<webpack.Configuration> = async () => {
-  const cdkEnvKey = process.env[ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]
-
-  // load stack parameters from ssm by cdkEnvKey
-  const params = await getStackParameters(cdkEnvKey)
+  // load stack parameters from ssm
+  const params = await loadStackParameters()
 
   return {
     entry: 'src/index.ts',
@@ -217,7 +215,7 @@ HOSTED ZONE など、各環境で共通で利用したいリソースは、`CdkS
 
 ## 1 つの AWS アカウント内に複数の CdkApp を持ちたい場合
 
-環境変数`CDK_ENV_APP_KEY`を設定することで、
+環境変数`CDK_APP_KEY`を設定することで、
 AWS アカウント内で参照する CdkApp を切り替えることができます。
 
 ## License

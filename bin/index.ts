@@ -7,15 +7,16 @@ import { pascalCase } from 'pascal-case'
 import {
   CdkDeployParameters,
   diffCdkDeployParametersKeys,
+  ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY,
   ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY,
-  SINGLETON_PREFIX,
   getStackNamesPerCdkEnvKey,
   loadCdkDeployParametersDefault,
+  loadCdkDeployParametersFromLocal,
   loadCdkDeployParametersFromSsm,
   mergeCdkDeployParameters,
+  SINGLETON_PREFIX,
   writeCdkDeployParametersToLocal,
   writeCdkDeployParametersToSsm,
-  loadCdkDeployParametersFromLocal,
 } from '../lib/CdkUtils'
 
 const { MultiSelect, Select, Input, Confirm, Snippet } = enquirer as any
@@ -133,9 +134,10 @@ const run = async () => {
   if (!process.env.AWS_REGION) {
     process.env.AWS_REGION = process.env.AWS_DEFAULT_REGION
   }
+  const cdkAppKey = process.env[ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY] || ''
 
   // AWSから現在デプロイ済みのStackを取得
-  const stackNamesPerCdkEnvKey = await getStackNamesPerCdkEnvKey()
+  const stackNamesPerCdkEnvKey = await getStackNamesPerCdkEnvKey(cdkAppKey)
 
   // デプロイするStackを選択または入力させる
   const { isNew, cdkEnvKey } = await selectCdkEnvKey(
@@ -147,12 +149,12 @@ const run = async () => {
   const latestCdkDeployParameters = isNew
     ? (() => {
         try {
-          return loadCdkDeployParametersFromLocal(cdkEnvKey)
+          return loadCdkDeployParametersFromLocal(cdkAppKey, cdkEnvKey)
         } catch {
           return null
         }
       })()
-    : await loadCdkDeployParametersFromSsm(cdkEnvKey).catch((e) => {
+    : await loadCdkDeployParametersFromSsm(cdkAppKey, cdkEnvKey).catch((e) => {
         console.log(chalk.yellow('error occurred in get ssm parameters.', e))
         return null
       })
@@ -167,11 +169,17 @@ const run = async () => {
       mergeCdkDeployParameters(defaultCdkDeployParameters, latestCdkDeployParameters || {})
     )
     console.log(chalk.gray('processing...'))
-    await writeCdkDeployParametersToSsm(cdkEnvKey, newParameters, !!latestCdkDeployParameters)
-    writeCdkDeployParametersToLocal(cdkEnvKey, newParameters)
+    await writeCdkDeployParametersToSsm(
+      cdkAppKey,
+      cdkEnvKey,
+      newParameters,
+      !!latestCdkDeployParameters
+    )
+    writeCdkDeployParametersToLocal(cdkAppKey, cdkEnvKey, newParameters)
   } else {
     console.log(chalk.gray('processing...'))
     writeCdkDeployParametersToLocal(
+      cdkAppKey,
       cdkEnvKey,
       latestCdkDeployParameters || defaultCdkDeployParameters
     )

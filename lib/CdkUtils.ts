@@ -11,43 +11,41 @@ import { Construct } from '@aws-cdk/core'
 export type CdkDeployParameters = { [name: string]: string }
 
 export const ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY = 'CDK_ENV_KEY'
-export const ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY = 'CDK_ENV_APP_KEY'
+export const ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY = 'CDK_APP_KEY'
 export const SINGLETON_PREFIX = 'SINGLETON__'
 export const CDK_DEPLOY_PARAMETERS_KEY = 'CdkDeployParametersString'
 export const CDK_DEPLOY_DEFAULT_PARAMETERS_FILE_PATH = 'cdk.parameters.default.env'
 
-const makeStackParameterPath = (cdkEnvKey: string, ...paths: string[]) =>
-  '/' +
-  [
-    'CDK',
-    pascalCase(process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY] || ''),
-    pascalCase(cdkEnvKey),
-    ...paths,
-  ]
-    .filter((s) => !!s)
-    .join('/')
+const makeStackParameterPath = (cdkAppKey: string, cdkEnvKey: string, ...paths: string[]) =>
+  '/' + ['CDK', pascalCase(cdkAppKey), pascalCase(cdkEnvKey), ...paths].filter((s) => !!s).join('/')
 
-const makeCdkDeployParametersFilePath = (cdkEnvKey: string) => {
+const makeCdkDeployParametersFilePath = (cdkAppKey: string, cdkEnvKey: string) => {
   const cwd = process.cwd()
   const cdkJson = require(path.resolve(cwd, 'cdk.json'))
-  return path.resolve(cwd, cdkJson.output || 'cdk.out', `${cdkEnvKey}.parameters.json`)
+  return path.resolve(cwd, cdkJson.output || 'cdk.out', `${cdkAppKey}${cdkEnvKey}.parameters.json`)
 }
 
 export const createCdkSsmStringParameter = (
   scope: Construct,
-  { cdkEnvKey, name, value }: { cdkEnvKey: string; name: string; value: string }
+  {
+    cdkAppKey,
+    cdkEnvKey,
+    name,
+    value,
+  }: { cdkAppKey: string; cdkEnvKey: string; name: string; value: string }
 ) => {
   return new AwsCdkSsm.StringParameter(scope, name, {
-    parameterName: makeStackParameterPath(cdkEnvKey, name),
+    parameterName: makeStackParameterPath(cdkAppKey, cdkEnvKey, name),
     stringValue: value,
   })
 }
 
 export const getStackParameters = async <T extends { [key: string]: string }>(
+  cdkAppKey: string,
   cdkEnvKey: string,
   option?: AwsSdkSsm.Types.ClientConfiguration
 ) => {
-  const parameterPath = makeStackParameterPath(cdkEnvKey) + '/'
+  const parameterPath = makeStackParameterPath(cdkAppKey, cdkAppKey, cdkEnvKey) + '/'
 
   // ssmからAWSリソースの設定情報を取得
   const ssm = new AwsSdkSsm(option)
@@ -76,6 +74,7 @@ export const getStackParameters = async <T extends { [key: string]: string }>(
 }
 
 const getStackTagMappingList = async (
+  cdkAppKey: string,
   options?: ResourceGroupsTaggingAPI.Types.ClientConfiguration
 ) => {
   const client = new ResourceGroupsTaggingAPI(options)
@@ -85,7 +84,7 @@ const getStackTagMappingList = async (
     const result = await client
       .getResources({
         PaginationToken: paginationToken,
-        TagFilters: [{ Key: getTagNameCdkEnvKey() }],
+        TagFilters: [{ Key: getTagNameCdkEnvKey(cdkAppKey) }],
         ResourceTypeFilters: ['cloudformation:stack'],
       })
       .promise()
@@ -100,13 +99,13 @@ const getStackTagMappingList = async (
   return getStackTagMappingListPerPage()
 }
 
-export const getTagNameCdkEnvKey = () =>
-  process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY] || 'CdkEnvKey'
+export const getTagNameCdkEnvKey = (cdkAppKey: string) => cdkAppKey || 'CdkEnvKey'
 
 export const getStackNamesPerCdkEnvKey = async (
+  cdkAppKey: string,
   options?: ResourceGroupsTaggingAPI.Types.ClientConfiguration
 ) => {
-  const stackTagMappingList = await getStackTagMappingList(options)
+  const stackTagMappingList = await getStackTagMappingList(cdkAppKey, options)
   const stackNamesPerCdkEnvKey = stackTagMappingList.reduce<{ [cdkEnvKey: string]: string[] }>(
     (payload, stackTagMapping) => {
       const cdkEnvKey = stackTagMapping.Tags![0].Value
@@ -140,11 +139,12 @@ export const loadCdkDeployParametersDefault = () => {
 }
 
 export const loadCdkDeployParametersFromSsm: (
+  cdkAppKey: string,
   cdkEnvKey: string,
   option?: AwsSdkSsm.Types.ClientConfiguration
-) => Promise<CdkDeployParameters> = async (cdkEnvKey, option?) => {
+) => Promise<CdkDeployParameters> = async (cdkAppKey, cdkEnvKey, option) => {
   const response = await new AwsSdkSsm(option)
-    .getParameter({ Name: makeStackParameterPath(cdkEnvKey, CDK_DEPLOY_PARAMETERS_KEY) })
+    .getParameter({ Name: makeStackParameterPath(cdkAppKey, cdkEnvKey, CDK_DEPLOY_PARAMETERS_KEY) })
     .promise()
   return response.Parameter && response.Parameter.Value ? JSON.parse(response.Parameter.Value) : {}
 }
@@ -152,10 +152,12 @@ export const loadCdkDeployParametersFromSsm: (
 export const loadCdkDeployParametersFromLocal = <
   T extends CdkDeployParameters = CdkDeployParameters
 >(
+  cdkAppKey: string,
   cdkEnvKey: string
-) => require(makeCdkDeployParametersFilePath(cdkEnvKey)) as T
+) => require(makeCdkDeployParametersFilePath(cdkAppKey, cdkEnvKey)) as T
 
 export const writeCdkDeployParametersToSsm = async (
+  cdkAppKey: string,
   cdkEnvKey: string,
   deployParameters: CdkDeployParameters,
   overwrite: boolean,
@@ -165,24 +167,25 @@ export const writeCdkDeployParametersToSsm = async (
     .putParameter({
       Type: 'String',
       Overwrite: overwrite,
-      Name: makeStackParameterPath(cdkEnvKey, CDK_DEPLOY_PARAMETERS_KEY),
+      Name: makeStackParameterPath(cdkAppKey, cdkEnvKey, CDK_DEPLOY_PARAMETERS_KEY),
       Value: JSON.stringify(deployParameters),
-      Tags: overwrite ? undefined : [{ Key: 'CdkEnvKey', Value: cdkEnvKey }],
+      Tags: overwrite ? undefined : [{ Key: getTagNameCdkEnvKey(cdkAppKey), Value: cdkEnvKey }],
     })
     .promise()
     .catch((e) => {
       if (e.code === 'ParameterAlreadyExists') {
-        return writeCdkDeployParametersToSsm(cdkEnvKey, deployParameters, true, option)
+        return writeCdkDeployParametersToSsm(cdkAppKey, cdkEnvKey, deployParameters, true, option)
       }
       return Promise.reject(e)
     })
 }
 
 export const writeCdkDeployParametersToLocal = (
+  cdkAppKey: string,
   cdkEnvKey: string,
   deployParameters: CdkDeployParameters
 ) => {
-  const filePath = makeCdkDeployParametersFilePath(cdkEnvKey)
+  const filePath = makeCdkDeployParametersFilePath(cdkAppKey, cdkEnvKey)
   if (!fs.existsSync(path.dirname(filePath))) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true })
   }

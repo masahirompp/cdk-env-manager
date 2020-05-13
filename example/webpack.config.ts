@@ -1,29 +1,24 @@
 import webpack from 'webpack'
-import { ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY, getStackParameters } from '../lib'
+import { loadStackParameters } from '../lib'
 
 const configFunction: () => Promise<webpack.Configuration> = async () => {
-  const cdkEnvKey = process.env[ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]
-  if (!cdkEnvKey) {
-    throw Error(`Environment Variable not found: ${ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY}`)
-  }
-
   // load stack parameters from ssm by cdkEnvKey
-  const params = await getStackParameters(cdkEnvKey)
+  const params = await loadStackParameters()
 
   const watch = !!process.env.WATCH
 
   return {
     entry: {
-      index: 'index.ts'
+      index: 'index.ts',
     },
     output: {
       filename: '[id].[hash].js',
       chunkFilename: '[id].[hash].js',
       path: 'dist',
-      publicPath: '/'
+      publicPath: '/',
     },
     resolve: {
-      extensions: ['.ts', '.tsx', '.js', '.jsx']
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
     module: {
       rules: [
@@ -45,33 +40,33 @@ const configFunction: () => Promise<webpack.Configuration> = async () => {
                             targets: ['>3%'],
                             modules: false,
                             useBuiltIns: 'usage',
-                            corejs: { version: 2, proposals: true }
-                          }
-                        ]
+                            corejs: { version: 2, proposals: true },
+                          },
+                        ],
                       ]),
                   '@babel/preset-typescript',
-                  '@babel/preset-react'
+                  '@babel/preset-react',
                 ],
                 plugins: [
                   ['@babel/plugin-proposal-decorators', { legacy: true }],
                   ['@babel/plugin-proposal-class-properties', { loose: true }],
                   '@babel/plugin-syntax-dynamic-import',
-                  ...(watch ? ['react-hot-loader/babel'] : [])
-                ]
-              }
-            }
-          ]
-        }
-      ]
+                  ...(watch ? ['react-hot-loader/babel'] : []),
+                ],
+              },
+            },
+          ],
+        },
+      ],
     },
     plugins: [
       new webpack.DefinePlugin({
         ...Object.keys(params).reduce(
           (payload, key) => ({ ...payload, [key]: JSON.stringify(params[key]) }),
           {}
-        )
-      })
-    ]
+        ),
+      }),
+    ],
   }
 }
 

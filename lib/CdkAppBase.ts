@@ -1,8 +1,8 @@
 import * as cdk from '@aws-cdk/core'
 import {
   CdkDeployParameters,
+  ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY,
   ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY,
-  ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY,
   loadCdkDeployParametersFromLocal,
 } from './CdkUtils'
 
@@ -12,14 +12,15 @@ export abstract class CdkAppBase<
   readonly __appKey: string
   readonly cdkEnvKey: string
   protected readonly deployParameters: T
+
   constructor(protected props?: cdk.AppProps) {
     super(props)
-    this.__appKey = process.env[ENVIRONMENT_VARIABLE_NAME_TAG_NAME_CDK_ENV_KEY] || ''
+    this.__appKey = process.env[ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY] || ''
     this.cdkEnvKey = process.env[ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]!
     if (!this.cdkEnvKey) {
       throw Error(`Environment Variable not found: ${ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY}`)
     }
-    this.deployParameters = loadCdkDeployParametersFromLocal(this.cdkEnvKey)
+    this.deployParameters = loadCdkDeployParametersFromLocal(this.__appKey, this.cdkEnvKey)
     this.createStacks()
   }
 
