@@ -25,6 +25,10 @@ export abstract class CdkSingletonStackBase<
     this.exports = this.createResources()
   }
 
+  protected name(name: string) {
+    return `${this.__appKey}${name}`
+  }
+
   protected createOutputsSsmParameters<T extends { [key: string]: string }>(outputs: T) {
     Object.entries(outputs).map(([name, value]) =>
       createCdkSsmStringParameter(this, {
