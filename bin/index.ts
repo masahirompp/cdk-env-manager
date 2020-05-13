@@ -15,6 +15,7 @@ import {
   mergeCdkDeployParameters,
   writeCdkDeployParametersToLocal,
   writeCdkDeployParametersToSsm,
+  loadCdkDeployParametersFromLocal,
 } from '../lib/CdkUtils'
 
 const { MultiSelect, Select, Input, Confirm, Snippet } = enquirer as any
@@ -144,7 +145,13 @@ const run = async () => {
   // パラメータの確認（最新のパラメータは、SSMとローカルの両方に保持する）
   const defaultCdkDeployParameters = loadCdkDeployParametersDefault()
   const latestCdkDeployParameters = isNew
-    ? null
+    ? (() => {
+        try {
+          return loadCdkDeployParametersFromLocal(cdkEnvKey)
+        } catch {
+          return null
+        }
+      })()
     : await loadCdkDeployParametersFromSsm(cdkEnvKey).catch((e) => {
         console.log(chalk.yellow('error occurred in get ssm parameters.', e))
         return null
