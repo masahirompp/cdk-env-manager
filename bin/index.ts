@@ -141,7 +141,7 @@ const run = async () => {
 
   // デプロイするStackを選択または入力させる
   const { isNew, cdkEnvKey } = await selectCdkEnvKey(
-    Object.keys(stackNamesPerCdkEnvKey).filter((key) => !key.startsWith(SINGLETON_PREFIX))
+    Object.keys(stackNamesPerCdkEnvKey).filter((key) => !key.includes(SINGLETON_PREFIX))
   )
 
   // パラメータの確認（最新のパラメータは、SSMとローカルの両方に保持する）

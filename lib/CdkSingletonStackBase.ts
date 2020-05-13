@@ -15,7 +15,7 @@ export abstract class CdkSingletonStackBase<
     protected props: Props,
     protected stackProps?: Omit<cdk.StackProps, 'stackName'>
   ) {
-    super(scope, stackName, stackProps)
+    super(scope, `${scope.__appKey}${stackName}`, stackProps)
     this.tags.setTag(
       getTagNameCdkEnvKey(scope.__appKey),
       `${scope.__appKey}${SINGLETON_PREFIX}${stackName}`
