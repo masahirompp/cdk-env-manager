@@ -17,7 +17,7 @@ import {
   SINGLETON_PREFIX,
   writeCdkDeployParametersToLocal,
   writeCdkDeployParametersToSsm,
-} from '../lib/CdkUtils'
+} from '../lib/util'
 
 const { MultiSelect, Select, Input, Confirm, Snippet } = enquirer as any
 
