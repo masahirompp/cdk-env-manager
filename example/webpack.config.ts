@@ -1,5 +1,5 @@
 import webpack from 'webpack'
-import { loadStackParameters } from '../lib'
+import { loadStackParameters } from '../lib/util'
 
 const configFunction: () => Promise<webpack.Configuration> = async () => {
   // load stack parameters from ssm by cdkEnvKey

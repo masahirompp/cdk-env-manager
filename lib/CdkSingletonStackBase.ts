@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core'
 import { CdkAppBase } from './CdkAppBase'
-import { createCdkSsmStringParameter, getTagNameCdkEnvKey, SINGLETON_PREFIX } from './CdkUtils'
+import { createCdkSsmStringParameter } from './CdkUtils'
+import { getTagNameCdkEnvKey, SINGLETON_PREFIX } from './util'
 
 export abstract class CdkSingletonStackBase<
   Props extends {} = {},

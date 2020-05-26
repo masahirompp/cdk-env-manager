@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core'
 import { CdkAppBase } from './CdkAppBase'
-import { createCdkSsmStringParameter, getTagNameCdkEnvKey } from './CdkUtils'
+import { createCdkSsmStringParameter } from './CdkUtils'
+import { getTagNameCdkEnvKey } from './util'
 
 export abstract class CdkStackBase<
   Props extends {} = {},

@@ -4,7 +4,7 @@ import {
   ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY,
   ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY,
   loadCdkDeployParametersFromLocal,
-} from './CdkUtils'
+} from './util'
 
 export abstract class CdkAppBase<
   T extends CdkDeployParameters = CdkDeployParameters
