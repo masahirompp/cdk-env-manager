@@ -169,7 +169,7 @@ SSM に書き出された設定値を、webpack で読み込んでビルドす�
 ```typescript
 // webpack.config.ts
 import webpack from 'webpack'
-import { loadStackParameters } from 'cdk-env-manager/util'
+import { loadStackParameters } from 'cdk-env-manager/lib/util'
 
 const configFunction: () => Promise<webpack.Configuration> = async () => {
   // load stack parameters from ssm
