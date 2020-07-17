@@ -221,7 +221,9 @@ const run = async () => {
   }
 
   // diff
-  if (!skipDiff) {
+  if (skipDiff) {
+    console.log('skip diff.')
+  } else {
     const resultDiff = await exec('cdk', ['diff', ...cdkArgs], {
       ...process.env,
       [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey,
