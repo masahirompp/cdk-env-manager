@@ -151,6 +151,12 @@ npx cdk-env-manager
 
 ## CLI OPTIONS
 
+### --skip-diff
+
+`cdk diff`の実行をスキップします。
+
+### other options
+
 aws-cdk の cli options が使用できます。
 `cdk diff`, `cdk deploy`実行時に指定された option を渡します。
 

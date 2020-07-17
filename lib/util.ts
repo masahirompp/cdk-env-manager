@@ -8,6 +8,7 @@ import path from 'path'
 
 export type CdkDeployParameters = { [name: string]: string }
 
+export const SKIP_DIFF_OPTION = '--skip-diff'
 export const ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY = 'CDK_ENV_KEY'
 export const ENVIRONMENT_VARIABLE_NAME_CDK_APP_KEY = 'CDK_APP_KEY'
 export const SINGLETON_PREFIX = 'SINGLETON__'

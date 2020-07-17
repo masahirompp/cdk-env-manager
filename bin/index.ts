@@ -15,6 +15,7 @@ import {
   loadCdkDeployParametersFromSsm,
   mergeCdkDeployParameters,
   SINGLETON_PREFIX,
+  SKIP_DIFF_OPTION,
   writeCdkDeployParametersToLocal,
   writeCdkDeployParametersToSsm,
 } from '../lib/util'
@@ -185,8 +186,15 @@ const run = async () => {
     )
   }
 
-  // stack app
+  // arguments
   const cdkArgs = process.argv.slice(2) // コマンドライン引数(0: node, 1: script file, 2...: args)
+  const skipDiffIndex = cdkArgs.indexOf(SKIP_DIFF_OPTION)
+  const skipDiff = skipDiffIndex > -1
+  if (skipDiff) {
+    cdkArgs.splice(skipDiffIndex, 1)
+  }
+
+  // stack app
   const stackNames = execSync(['cdk', 'list', ...cdkArgs].join(' '), {
     encoding: 'utf8',
     env: { ...process.env, [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey },
@@ -213,11 +221,13 @@ const run = async () => {
   }
 
   // diff
-  const resultDiff = await exec('cdk', ['diff', ...cdkArgs], {
-    ...process.env,
-    [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey,
-  })
-  console.log(resultDiff)
+  if (!skipDiff) {
+    const resultDiff = await exec('cdk', ['diff', ...cdkArgs], {
+      ...process.env,
+      [ENVIRONMENT_VARIABLE_NAME_CDK_ENV_KEY]: cdkEnvKey,
+    })
+    console.log(resultDiff)
+  }
 
   // select Stacks to deploy
   let targetStacks: string[] = []
