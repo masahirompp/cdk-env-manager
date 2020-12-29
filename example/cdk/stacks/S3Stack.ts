@@ -1,20 +1,20 @@
-import * as cdk from '@aws-cdk/core'
-import * as s3 from '@aws-cdk/aws-s3'
-import { CdkStackBase } from '../../../lib/CdkStackBase'
+import * as cdk from "@aws-cdk/core";
+import * as s3 from "@aws-cdk/aws-s3";
+import { CdkStackBase } from "../../../lib/CdkStackBase";
 
-type Input = { removalPolicy: cdk.RemovalPolicy }
-type Export = { myBucketArn: string }
+type Input = { removalPolicy: cdk.RemovalPolicy };
+type Export = { myBucketArn: string };
 
 export class S3Stack extends CdkStackBase<Input, Export> {
   createResources() {
-    const myBucket = new s3.Bucket(this, this.name('MyBucket'), {
+    const myBucket = new s3.Bucket(this, this.name("MyBucket"), {
       removalPolicy: this.props.removalPolicy,
-    })
+    });
 
-    this.createOutputsSsmParameters({ myBucketName: myBucket.bucketName })
+    this.createOutputsSsmParameters({ myBucketName: myBucket.bucketName });
 
     return {
       myBucketArn: myBucket.bucketArn,
-    }
+    };
   }
 }
